@@ -1,0 +1,27 @@
+body {
+    text-align: center;
+    font-family: Comic Sans MS, cursive;
+    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+}
+
+h1 {
+    color: #fff;
+    font-size: 40px;
+    margin-top: 50px;
+}
+
+.buttons button {
+    font-size: 20px;
+    padding: 15px 25px;
+    margin: 15px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background-color: #ffeb3b;
+}
+
+#result {
+    font-size: 30px;
+    color: #ffffff;
+    margin-top: 30px;
+}

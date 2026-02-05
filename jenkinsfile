@@ -1,0 +1,97 @@
+pipeline {
+    agent any
+
+    parameters {
+        booleanParam(name: 'DESTROY', defaultValue: false, description: 'Destroy Infrastructure')
+    }
+
+    environment {
+        KEY_PATH = "/var/lib/jenkins/jenkinskkp.pem"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init'
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            when { expression { params.DESTROY == false } }
+            steps {
+                dir('terraform') {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Get Public IP') {
+            when { expression { params.DESTROY == false } }
+            steps {
+                script {
+                    env.SERVER_IP = sh(
+                        script: "cd terraform && terraform output -raw public_ip",
+                        returnStdout: true
+                    ).trim()
+                }
+            }
+        }
+
+        stage('Wait for EC2 SSH') {
+            when { expression { params.DESTROY == false } }
+            steps {
+                sh '''
+                while ! nc -z ${SERVER_IP} 22; do
+                  echo "Waiting for SSH..."
+                  sleep 10
+                done
+                '''
+            }
+        }
+
+        stage('Install Nginx') {
+            when { expression { params.DESTROY == false } }
+            steps {
+                sh """
+                ssh -i ${KEY_PATH} -o StrictHostKeyChecking=no ubuntu@${SERVER_IP} \
+                "sudo apt update && sudo apt install -y nginx"
+                """
+            }
+        }
+
+        stage('Deploy Website') {
+            when { expression { params.DESTROY == false } }
+            steps {
+                sh """
+                scp -i ${KEY_PATH} -o StrictHostKeyChecking=no website/* \
+                ubuntu@${SERVER_IP}:/tmp/
+                """
+
+                sh """
+                ssh -i ${KEY_PATH} -o StrictHostKeyChecking=no ubuntu@${SERVER_IP} "
+                sudo rm -rf /var/www/html/* &&
+                sudo mv /tmp/* /var/www/html/ &&
+                sudo systemctl restart nginx"
+                """
+            }
+        }
+
+        stage('Terraform Destroy') {
+            when { expression { params.DESTROY == true } }
+            steps {
+                dir('terraform') {
+                    sh 'terraform destroy -auto-approve'
+                }
+            }
+        }
+    }
+}
