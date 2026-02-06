@@ -1,19 +1,2 @@
-
-body {
-  text-align: center;
-  background: linear-gradient(to right, #667eea, #764ba2);
-  font-family: Arial;
-  color: white;
-}
-
-h1 {
-  margin-top: 50px;
-}
-
-button {
-  padding: 15px 30px;
-  margin: 10px;
-  font-size: 18px;
-  border-radius: 10px;
-  cursor: pointer;
-}
+body { text-align:center; font-family:Arial; background:#ffeaa7; }
+button { padding:10px 20px; margin:10px; font-size:18px; }
