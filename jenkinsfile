@@ -10,7 +10,7 @@ pipeline {
 
         stage('Clone Repo') {
             steps {
-                git ''
+                git 'https://github.com/satheeshm5465-aws/ci-cd-game'
             }
         }
 
