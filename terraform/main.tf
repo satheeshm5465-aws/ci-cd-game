@@ -5,7 +5,7 @@ provider "aws" {
 resource "aws_instance" "game_server" {
   ami           = "ami-019715e0d74f695be" 
   instance_type = "t3.micro"
-  key_name      = "jenkinskkp"
+  key_name      = "jenkins"
 
   security_groups = [aws_security_group.game_sg_jenkins.name]
 
@@ -22,8 +22,8 @@ resource "aws_instance" "game_server" {
   }
 }
 
-resource "aws_security_group" "gamenew" {
-  name = "gamenew"
+resource "aws_security_group" "game_sg_jenkins" {
+  name = "game_sg_jenkins"
 
   ingress {
     from_port   = 22
