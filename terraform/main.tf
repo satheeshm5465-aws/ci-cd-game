@@ -7,7 +7,7 @@ resource "aws_instance" "game_server" {
   instance_type = "t3.micro"
   key_name      = "jenkinskkp"
 
-  security_groups = [aws_security_group.game-sg-jenkins.name]
+  security_groups = [aws_security_group.game_sg_jenkins.name]
 
   user_data = <<-EOF
               #!/bin/bash
