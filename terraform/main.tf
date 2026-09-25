@@ -5,7 +5,7 @@ provider "aws" {
 resource "aws_instance" "game_server" {
   ami           = "ami-01a00762f46d584a1" 
   instance_type = "t3.micro"
-  key_name      = "ubuntu"
+  key_name      = "newkey"
 
   security_groups = [aws_security_group.gamesathev2.name]
 
